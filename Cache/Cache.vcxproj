@@ -138,11 +138,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="cache_tests.h" />
     <ClInclude Include="LFU.hpp" />
+    <ClInclude Include="Tests.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cache_tests.cpp" />
+    <ClCompile Include="Tests.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

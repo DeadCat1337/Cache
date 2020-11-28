@@ -5,10 +5,15 @@
 #include <unordered_map>
 #include <iostream>
 
+struct page_t {
+	int id;
+	//double data; 
+};
+
 namespace cache {
 
 	template<typename T, typename KeyT>
-	class LFU {
+	class LFU{
 	public:
 		LFU(size_t size) : size_(size) {}
 
