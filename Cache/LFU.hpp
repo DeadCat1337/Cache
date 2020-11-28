@@ -35,37 +35,37 @@ namespace cache {
 			if (hit == hash_.end()) {
 				//not in cache
 				if (full()) {
-					cache_.sort([](const fpage_t& first, const fpage_t& second) {
-						return first.freq > second.freq;
-					});
-					release_last_elem();
-					auto iter = hash_.find(cache_.back().key);
-					hash_.erase(iter);
-					cache_.pop_back();
-					//std::cout << "deleted least feaquent" << std::endl;
+					//cache full
+					delete_less_frequent();
 				}
 
+				//there is free space
 				struct fpage_t fpg;
 				fpg.key = key;
 				fpg.data = long_get_elem(key);
 				fpg.freq = 1;
 				cache_.push_back(fpg);
 				hash_.insert(std::make_pair(key, --cache_.end()));
-				//std::cout << "added new" << std::endl;
-				//std::cout << *(fpg.data) << std::endl;
-				//return fpg.data;
 				return false;
 			}
 			else 
 			{
 				//already in cache
 				hit->second->freq++;
-				//std::cout << "freq increased" << std::endl;
-				//std::cout << *(hit->second->data) << std::endl;
-				//return hit->second->data;
+				if (hit->second != cache_.begin()) {
+					// move element up, if needed
+					typename std::list<fpage_t>::iterator it = hit->second;
+					it--;
+					for (; it != cache_.begin(); --it) {
+						if (it->freq > hit->second->freq) break;
+					}
+					it++;
+					auto temp = *it;
+					*it = *(hit->second);
+					*(hit->second) = temp;
+				}
 				return true;
 			}
-
 		}
 
 	private:
@@ -85,6 +85,13 @@ namespace cache {
 		//special function to free used memory
 		void release_last_elem() {
 			if (cache_.back().data) delete cache_.back().data;
+		}
+
+		void delete_less_frequent() {
+			release_last_elem();
+			auto iter = hash_.find(cache_.back().key);
+			hash_.erase(iter);
+			cache_.pop_back();
 		}
 
 		size_t size_;
